@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>여주센터 출근 가이드</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #f4f6f8;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    header {
+        background: #146eb4;
+        color: white;
+        text-align: center;
+        padding: 20px 15px;
+    }
+
+    header h1 {
+        font-size: 22px;
+        margin-bottom: 5px;
+    }
+
+    header p {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    .select-area {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .select-btn {
+        flex: 1;
+        border: none;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+
+    .old { background: #1e88e5; }
+    .new { background: #ff9800; }
+
+    .select-btn.active {
+        border: none;
+        box-shadow: 0 0 0 3px #ffffff, 0 0 0 6px #ff9800;
+        transform: scale(1.02);
+    }
+
+    .progress-container {
+        background: #e0e0e0;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 15px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 12.5%;
+        background: #ff9800;
+        transition: width 0.3s ease;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .welcome {
+        background: #e8f5e9;
+        border-left: 5px solid #4caf50;
+    }
+
+    .step-header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .step-count {
+        color: #888;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .step-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .step-desc {
+        font-size: 16px;
+        line-height: 1.8;
+        margin-top: 15px;
+    }
+
+    /* 이미지 스타일 (터치 가능하도록 돋보기 커서 및 부드러운 효과 추가) */
+    img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 15px 0;
+        background: #eee;
+        cursor: zoom-in;
+        transition: opacity 0.2s;
+    }
+
+    img:active {
+        opacity: 0.85;
+    }
+
+    /* 이미지 전체화면 확대 팝업(모달) 스타일 */
+    #imageModal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+    }
+
+    #imageModal img {
+        max-width: 100%;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 4px;
+        cursor: zoom-out;
+        margin: 0;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10000;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        font-size: 20px;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+        font-size: 18px;
+    }
+
+    p {
+        margin-bottom: 10px;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    ul, ol {
+        margin: 10px 0 10px 20px;
+        font-size: 15px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .nav-btn {
+        flex: 1;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .prev-btn { background: #6c757d; }
+    .next-btn { background: #ff9800; }
+
+    .nav-btn:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>여주센터 출근 가이드</h1>
+    <p>본인 근무 유형을 선택해 주세요.</p>
+</header>
+
+<div class="container">
+
+<div class="select-area">
+    <button class="select-btn old" id="btnOld" onclick="switchMode('old')">
+        기존 인원
+    </button>
+    <button class="select-btn new active" id="btnNew" onclick="switchMode('new')">
+        신규 인원
+    </button>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="content"></div>
+
+</div>
+
+<!-- 이미지 확대 모달(팝업) 레이어 -->
+<div id="imageModal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="modalImage" src="" alt="확대된 이미지">
+</div>
+
+<script>
+let currentMode = 'new'; // 'old' 또는 'new'
+let currentStep = 1;
+
+// 이미지 클릭 시 모달창 열기
+function openModal(src) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = 'flex';
+    modalImg.src = src;
+}
+
+// 모달창 닫기
+function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+}
+
+function switchMode(mode) {
+    currentMode = mode;
+    currentStep = 1;
+
+    // 버튼 활성화 클래스 토글
+    document.getElementById('btnOld').classList.toggle('active', mode === 'old');
+    document.getElementById('btnNew').classList.toggle('active', mode === 'new');
+
+    updateProgress();
+    renderContent();
+}
+
+function updateProgress() {
+    const bar = document.getElementById("progressBar");
+
+    if (currentMode === 'new') {
+        const widthMap = {
+            1: "12.5%", 2: "25%", 3: "37.5%", 4: "50%",
+            5: "62.5%", 6: "75%", 7: "87.5%", 8: "100%"
+        };
+        bar.style.width = widthMap[currentStep] || "12.5%";
+    } else {
+        const widthMapOld = {
+            1: "20%", 2: "40%", 3: "60%", 4: "80%", 5: "100%"
+        };
+        bar.style.width = widthMapOld[currentStep] || "20%";
+    }
+}
+
+function nextStep() {
+    const maxStep = (currentMode === 'new') ? 8 : 5;
+    if (currentStep < maxStep) {
+        currentStep++;
+        updateProgress();
+        renderContent();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateProgress();
+        renderContent();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// 기존 인원 각 단계별 함수
+function showExistingStep1() {
+    document.getElementById("content").innerHTML = `
+    <div class="card">
+        <div class="step-header">
+            <div class="step-count">STEP 1 / 5</div>
+            <div class="step-title">현재 위치 안내</div>
+        </div>
+        <img src="images/여주센터_현재위치.jpg" alt="인도인접장 배치도" onclick="openModal(this.src)">
+        <br><br>
+        <h3>STEP 1</h3>
+        <p>쿠펀치 출근 체크인 후 인도인접장을 스캔해 주세요.</p>
+        <img src="images/YEO_인도인접장.jpg" alt="인도인접장" onclick="openModal(this.src)">
+        <div class="nav-buttons">
+            <button class="nav-btn next-btn" onclick="currentStep=2; updateProgress(); showExistingStep2(); window.scrollTo({top:0, behavior:'smooth'});">다음 ▶</button>
+        </div>
+    </div>`;
+}
+function showExistingStep2() {
+    currentStep = 2; updateProgress();
+    document.getElementById("content").innerHTML = `
+    <div class="card">
+        <div class="step-header">
+            <div class="step-count">STEP 2 / 5</div>
+            <div class="step-title">쿠코드 출력</div>
+        </div>
+        <img src="images/여주센터_쿠코드출력기.jpg" alt="쿠코드 출력기" onclick="openModal(this.src)">
+        <br><br>
+        <p style="font-weight:bold;">STEP 2</p>
+        <p style="color:red;font-weight:bold;">※ 이전 출력한 쿠코드가 있으시다면 다음으로 이동해주세요.</p>
+        <p style="color:red;font-weight:bold;">※ 타센터 쿠코드 사용 가능</p>
+        <img src="images/YEO_쿠코드출력기.jpg" alt="쿠코드 출력기" onclick="openModal(this.src)">
+        <div class="nav-buttons">
+            <button class="nav-btn prev-btn" onclick="currentStep=1; updateProgress(); showExistingStep1(); window.scrollTo({top:0, behavior:'smooth'});">◀ 이전</button>
+            <button class="nav-btn next-btn" onclick="currentStep=3; updateProgress(); showExistingStep3(); window.scrollTo({top:0, behavior:'smooth'});">다음 ▶</button>
+        </div>
+    </div>`;
+}
+function showExistingStep3() {
+    currentStep = 3; updateProgress();
+    document.getElementById("content").innerHTML = `
+    <div class="card">
+        <div class="step-header">
+            <div class="step-count">STEP 3 / 5</div>
+            <div class="step-title">사물함 & 안전화 착용</div>
+        </div>
+        <p style="font-weight:bold;">STEP 3</p>
+        <p>사물함 이용 및 안전화 착용 후 시업 시간까지 현장으로 이동해 주세요.</p>
+        <img src="images/여주센터_사물함안전화.jpg" alt="사물함&안전화" onclick="openModal(this.src)">
+        <div class="nav-buttons">
+            <button class="nav-btn prev-btn" onclick="currentStep=2; updateProgress(); showExistingStep2(); window.scrollTo({top:0, behavior:'smooth'});">◀ 이전</button>
+            <button class="nav-btn next-btn" onclick="currentStep=4; updateProgress(); showExistingStep4(); window.scrollTo({top:0, behavior:'smooth'});">다음 ▶</button>
+        </div>
+    </div>`;
+}
+function showExistingStep4() {
+    currentStep = 4; updateProgress();
+    document.getElementById("content").innerHTML = `
+    <div class="card">
+        <div class="step-header">
+            <div class="step-count">STEP 4 / 5</div>
+            <div class="step-title">퇴근 및 카드키 반납</div>
+        </div>
+        <h3>조퇴 안내</h3>
+        <p>조퇴 시 현장 관리자님께 말씀 후 조퇴신청서를 작성해 주세요.</p>
+        <ul>
+            <li style="color:red;font-weight:bold;">쿠펀치 체크아웃</li>
+            <li>카드키 반납</li>
+            <li>귀가</li>
+        </ul>
+        <br><br>
+        <h3>카드키 반납함 위치</h3>
+        <div style="background:#fff3cd; border-left:6px solid #dc3545; padding:15px; margin-top:15px; font-weight:bold;">
+            ⚠️ 퇴근 또는 조퇴 시 반드시 <span style="color:red;">쿠펀치 체크아웃</span> 후 카드키를 반납해 주세요.
+        </div>
+        <img src="images/YEO_퇴근_카드키반납함.jpg" alt="카드키 반납함" onclick="openModal(this.src)">
+        <div class="nav-buttons">
+            <button class="nav-btn prev-btn" onclick="currentStep=3; updateProgress(); showExistingStep3(); window.scrollTo({top:0, behavior:'smooth'});">◀ 이전</button>
+            <button class="nav-btn next-btn" onclick="currentStep=5; updateProgress(); showExistingStep5(); window.scrollTo({top:0, behavior:'smooth'});">다음 ▶</button>
+        </div>
+    </div>`;
+}
+function showExistingStep5() {
+    currentStep = 5; updateProgress();
+    document.getElementById("content").innerHTML = `
+    <div class="card">
+        <div class="step-header">
+            <div class="step-count">STEP 5 / 5</div>
+            <div class="step-title">연장 및 셔틀버스 안내</div>
+        </div>
+        <div class="step-desc">
+            <h3>연장근무 안내</h3>
+            <br>
+            <div style="color:red; font-weight:bold; font-size:22px; margin:15px 0;">※ 연장근무 1시간은 선택 사항입니다.</div>
+            미연장시 퇴근 시간<br>주간조 : 17:00<br>오후조 : 04:00
+            <br><br>
+            미연장 시 별도 셔틀버스는 없으며, 퇴근 셔틀버스는 동일하게 출발합니다.
+            <br><br>
+            <strong>셔틀버스 출발 시간</strong><br>
+            <strong>주간조 : 18:20</strong><br>
+            <strong>오후조 : 05:20</strong>
+            <br><br>
+            셔틀버스 위치 및 노선표를 확인해 주세요.
+        </div>
+        <img src="images/YEO 260923 기준 노선표.png" alt="셔틀버스 노선" onclick="openModal(this.src)">
+        <div class="nav-buttons">
+            <button class="nav-btn prev-btn" onclick="currentStep=4; updateProgress(); showExistingStep4(); window.scrollTo({top:0, behavior:'smooth'});">◀ 이전</button>
+        </div>
+    </div>`;
+}
+
+// 신규 인원 통합 렌더링 함수
+function showNew() { currentStep = 1; currentMode = 'new'; updateProgress(); renderContent(); }
+
+function renderContent() {
+    if (currentMode === 'old') {
+        if (currentStep === 1) showExistingStep1();
+        else if (currentStep === 2) showExistingStep2();
+        else if (currentStep === 3) showExistingStep3();
+        else if (currentStep === 4) showExistingStep4();
+        else if (currentStep === 5) showExistingStep5();
+        return;
+    }
+
+    const content = document.getElementById("content");
+
+    if(currentStep === 1){
+        content.innerHTML = `
+        <div class="card welcome">
+            <h2>여주 센터에 오신 것을 환영합니다!</h2>
+            <br>
+            <p><strong>[출근 시] 아래 순서대로 진행해 주세요.</strong></p>
+            <br>
+            <ol style="text-align:left; line-height:2.2; padding-left:25px; margin:10px 0; font-size:16px; font-weight:600;">
+                <li style="margin-bottom:10px;">쿠펀치 출근체크인 (계좌등록)</li>
+                <li style="margin-bottom:10px;">서류 작성</li>
+                <li style="margin-bottom:10px;">인도인접장 체크인 (서류 제출 및 신분증 확인)</li>
+                <li style="margin-bottom:10px;">쿠코드 출력</li>
+                <li style="margin-bottom:10px;">인도인접장 대기</li>
+                <li style="margin-bottom:10px;">안전교육 참석</li>
+                <li style="margin-bottom:10px;">현장 배치 및 근무</li>
+                <li>퇴근 및 카드키 반납</li>
+            </ol>
+        </div>
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 1 / 8</div>
+                <div class="step-title">현재 위치 안내</div>
+            </div>
+            <img src="images/여주센터_현재위치.jpg" alt="인도인접장 배치도" onclick="openModal(this.src)">
+            <div class="step-desc">
+                <div style="text-align:center; font-size:20px; font-weight:bold; color:#ff6b00; margin-bottom:15px;">📍 현재 위치</div>
+                현재 위치를 확인 후 다음 단계로 이동해 주세요.
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 2){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 2 / 8</div>
+                <div class="step-title">STEP 1. 쿠펀치 출근 체크인</div>
+            </div>
+            <img src="images/여주센터_쿠펀치.jpg" alt="화이트보드 쿠펀치" onclick="openModal(this.src)">
+            <div class="step-desc">
+                <br>화이트보드 → 쿠펀치 체크인 순서로 출근 체크인 및 계좌등록을 진행해 주세요.
+                <br><br>● 계정 생성이 불가하시다면 HR에 문의 부탁드립니다.
+                <br><br>● WIFI 연결 시 '인터넷에 연결되어 있지 않음'은 정상 연결 상태입니다.
+                <br>( 데이터 사용 불가로 출퇴근 시에만 연결 )
+            </div>
+            <img src="images/YEO_쿠펀치안내.jpg" alt="쿠펀치 체크인 안내" onclick="openModal(this.src)">
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 3){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 3 / 8</div>
+                <div class="step-title">STEP 2. 서류 작성</div>
+            </div>
+            <img src="images/YEO_신규서류작성.jpg" alt="서류 테이블" onclick="openModal(this.src)">
+            <div class="step-desc">
+                <br>서류 작성 방법 안내에 따라 필수 부분을 작성해 주세요.
+                <br><br><strong>신규 일용직 사원님 (1부)</strong>
+                <br>● 건강상태확인서
+                <br><br><strong>웰컴데이 사원님 (3부)</strong>
+                <br>● 건강상태확인서
+                <br>● 입사지원서
+                <br>● 채용지원확인서
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 4){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 4 / 8</div>
+                <div class="step-title">STEP 3. 인도인접장 체크인</div>
+            </div>
+            <img src="images/여주센터_인도인접체크인.jpg" alt="인도인접장" onclick="openModal(this.src)">
+            <div class="step-desc">
+                <br>▶ 신분증 및 작성하신 서류를 제출해 주세요.
+                <br><br>▶ 쿠펀치 왼쪽 상단 목록 → 출근 체크인/아웃 선택
+                <br>생성된 QR코드를 큐브스캐너에 체크인 후 카드키를 2번 리더기에 찍어주세요.
+                <br><br>
+                <span style="color:red;font-weight:bold;">✅ 휴대폰 밝기를 최대로 설정해 주세요.</span>
+            </div>
+            <img src="images/YEO_인도인접장.jpg" alt="인도인접장" onclick="openModal(this.src)">
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 5){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 5 / 8</div>
+                <div class="step-title">STEP 4. 쿠코드 출력</div>
+            </div>
+            <img src="images/여주센터_쿠코드출력기.jpg" alt="쿠코드 출력기" onclick="openModal(this.src)">
+            <br><br>
+            <p style="color:red;font-weight:bold;">※ 이전 출력한 쿠코드가 있으시다면 다음으로 이동해주세요.</p>
+            <p style="color:red;font-weight:bold;">※ 타센터 쿠코드 사용 가능</p>
+            <img src="images/YEO_쿠코드출력기.jpg" alt="쿠코드 출력기" onclick="openModal(this.src)">
+            <div class="step-desc">
+                인도인접장 뒤편 쿠코드 출력기에서 쿠펀치 QR코드를 스캔하여 쿠코드를 출력해 주세요.
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 6){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 6 / 8</div>
+                <div class="step-title">STEP 5. 인도인접장 대기</div>
+            </div>
+            <img src="images/YEO_신규인원대기장소.jpg" alt="인도인접장 테이블" onclick="openModal(this.src)">
+            <div class="step-desc">
+                쿠코드 출력 후 테이블 앞 대기 공간에서 앉아서 대기해 주세요.
+                <br><br>관리자분께서 순차적으로 안전교육장으로 안내해 드릴 예정입니다.
+            </div>
+            <ul>
+                <li>별도의 안내 전까지 인도인접장을 벗어나지 말아 주세요.</li>
+                <li>이동 시 관리자 안내에 따라 이동해 주세요.</li>
+            </ul>
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 7){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 7 / 8</div>
+                <div class="step-title">STEP 6. 퇴근 및 카드키 반납</div>
+            </div>
+            <h3>조퇴 안내</h3>
+            <p>조퇴 시 현장 관리자님께 말씀 후 조퇴신청서를 작성해 주세요.</p>
+            <ul>
+                <li style="color:red;font-weight:bold;">쿠펀치 체크아웃</li>
+                <li>카드키 반납</li>
+                <li>귀가</li>
+            </ul>
+            <br><br>
+            <h3>카드키 반납함 위치</h3>
+            <div style="background:#fff3cd; border-left:6px solid #dc3545; padding:15px; margin-top:15px; font-weight:bold;">
+                ⚠️ 퇴근 또는 조퇴 시 반드시 <span style="color:red;">쿠펀치 체크아웃</span> 후 카드키를 반납해 주세요.
+            </div>
+            <img src="images/YEO_퇴근_카드키반납함.jpg" alt="카드키 반납함" onclick="openModal(this.src)">
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+                <button class="nav-btn next-btn" onclick="nextStep()">다음 ▶</button>
+            </div>
+        </div>`;
+    }
+    else if(currentStep === 8){
+        content.innerHTML = `
+        <div class="card">
+            <div class="step-header">
+                <div class="step-count">STEP 8 / 8</div>
+                <div class="step-title">STEP 7. 연장 및 셔틀버스 안내</div>
+            </div>
+            <div class="step-desc">
+                <h3>연장근무 안내</h3>
+                <br>
+                <div style="color:red; font-weight:bold; font-size:20px; margin:15px 0;">※ 연장근무 1시간은 선택 사항입니다.</div>
+                미연장시 퇴근 시간<br>주간조 : 17:00<br>오후조 : 04:00
+                <br><br>
+                미연장 시 별도 셔틀버스는 없으며, 퇴근 셔틀버스는 동일하게 출발합니다.
+                <br><br>
+                <strong>셔틀버스 출발 시간</strong><br>
+                <strong>주간조 : 18:20</strong><br>
+                <strong>오후조 : 05:20</strong>
+                <br><br>
+                셔틀버스 위치 및 노선표를 확인해 주세요.
+            </div>
+            <img src="images/YEO 260923 기준 노선표.png" alt="셔틀버스 노선표" onclick="openModal(this.src)">
+            <div class="nav-buttons">
+                <button class="nav-btn prev-btn" onclick="prevStep()">◀ 이전</button>
+            </div>
+        </div>`;
+    }
+}
+
+// 최초 실행
+updateProgress();
+showNew();
+</script>
+
+</body>
+</html>
